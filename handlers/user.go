@@ -17,12 +17,12 @@ func GetUser(c *fiber.Ctx) error {
 	username := c.Locals("username").(string)
 
 	bodyUsername := c.Params("username")
-	var user models.User
 
 	if username != bodyUsername {
 		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"error": "Unauthorized"})
 	}
 
+	var user models.User
 	if err := database.DB.Where("username = ?", bodyUsername).First(&user).Error; err != nil {
 		return c.Status(fiber.StatusNotFound).SendString("User not found")
 	}
@@ -34,12 +34,12 @@ func UpdateUser(c *fiber.Ctx) error {
 	username := c.Locals("username").(string)
 
 	bodyUsername := c.Params("username")
-	var user models.User
 
 	if username != bodyUsername {
 		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"error": "Unauthorized"})
 	}
 
+	var user models.User
 	if err := database.DB.Where("username = ?", bodyUsername).First(&user).Error; err != nil {
 		return c.Status(fiber.StatusNotFound).SendString("User not found")
 	}

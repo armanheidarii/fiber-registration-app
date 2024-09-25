@@ -17,9 +17,13 @@ func CreateUser(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusBadRequest).SendString(err.Error())
 	}
 
+	if user.Username == "" || user.Password == "" {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"msg": "Username and password are required!"})
+	}
+
 	var findUser models.User
 	if err := database.DB.Where("username = ?", user.Username).First(&findUser).Error; err == nil {
-		return c.Status(fiber.StatusNotFound).SendString("User has already signed up!")
+		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{"msg": "User has already signed up!"})
 	}
 
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
@@ -38,6 +42,10 @@ func Login(c *fiber.Ctx) error {
 
 	if err := c.BodyParser(user); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Cannot parse JSON"})
+	}
+
+	if user.Username == "" || user.Password == "" {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"msg": "Username and password are required!"})
 	}
 
 	var findUser models.User
