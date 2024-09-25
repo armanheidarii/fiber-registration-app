@@ -23,7 +23,7 @@ func CreateUser(c *fiber.Ctx) error {
 
 	var findUser models.User
 	if err := database.DB.Where("username = ?", user.Username).First(&findUser).Error; err == nil {
-		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{"msg": "User has already signed up!"})
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"msg": "User has already signed up!"})
 	}
 
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
